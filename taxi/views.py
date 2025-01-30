@@ -1,5 +1,5 @@
 from django.contrib.auth import get_user_model
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.forms import UserCreationForm
 from django.http import HttpResponse
 from django.shortcuts import render
@@ -65,6 +65,7 @@ class CarListView(LoginRequiredMixin, generic.ListView):
 class CarDetailView(LoginRequiredMixin, generic.DetailView):
     model = Car
 
+    @user_passes_test(lambda u: u.has_perm("taxi.change_car"))
     def post(self, request, *args, **kwargs) -> HttpResponse:
         car = self.get_object()
         if "assign_me" in request.POST:
